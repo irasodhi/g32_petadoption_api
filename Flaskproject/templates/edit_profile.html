@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title_block %} Edit Profile {% endblock %}
+
+{% block head %}
+<style>
+    /* Your CSS remains the same */
+</style>
+{% endblock %}
+
+{% block main_block %}
+<div class="container">
+    <div class="form-container">
+        <h2>Edit Your Profile</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+            <!-- CSRF Token for Flask -->
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" name="username" value="{{ current_user.username }}" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" value="{{ current_user.email }}" required>
+            </div>
+            <div class="form-group">
+                <label for="profile_picture">Profile Picture</label>
+                <input type="file" name="profile_picture">
+            </div>
+            <button type="submit">Update Profile</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

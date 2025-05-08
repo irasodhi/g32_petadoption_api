@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title_block %} Update {{ breed.name }} {% endblock %}
+
+{% block main_block %}
+<h3 class="text-center">Update Breed Details</h3>
+
+<div class="container">
+    <form method="POST">
+        {{ form.hidden_tag() }} <!-- CSRF Token via Flask-WTF -->
+
+        <!-- Breed Name -->
+        <div class="mb-3">
+            <label for="name" class="form-label">Breed Name:</label>
+            {{ form.name(class="form-control", value=breed.name) }} <!-- Form input using Flask-WTF -->
+        </div>
+
+        <!-- Species Name -->
+        <div class="mb-3">
+            <label for="species_name" class="form-label">Species:</label>
+            {{ form.species_name(class="form-control", value=breed.species.name) }} <!-- Form input using Flask-WTF -->
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center">
+            <input type="submit" value="Update Breed" class="btn btn-primary">
+        </div>
+
+        <!-- Cancel Button -->
+        <div class="text-center mt-3">
+            <a href="{{ url_for('add_breed') }}" class="btn btn-secondary">Cancel</a> <!-- Flask URL -->
+        </div>
+    </form>
+</div>
+{% endblock %}

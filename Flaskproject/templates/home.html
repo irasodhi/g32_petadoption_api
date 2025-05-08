@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title_block %}Home{% endblock %}
+
+{% block head %}
+<style>
+    body {
+        background: linear-gradient(to right, #ffe0f0, #e0f7ff);
+        font-family: 'Poppins', sans-serif;
+    }
+
+    h2 {
+        margin-top: 10px;
+        text-align: center;
+        color: #ff69b4;
+        font-size: 48px;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px #fff;
+        margin-bottom: 40px;
+    }
+
+    .card {
+        border: none;
+        border-radius: 20px;
+        background-color: #fff8fc;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-img-top {
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .card-title {
+        font-size: 24px;
+        color: #ff1493;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .card-text {
+        font-size: 16px;
+        color: #444;
+        line-height: 1.6;
+    }
+
+    .card-text strong {
+        color: #ff6f91;
+    }
+
+    .btn-primary {
+        background-color: #ff69b4;
+        border: none;
+        font-weight: bold;
+        border-radius: 12px;
+        padding: 10px;
+        font-size: 16px;
+        transition: background-color 0.3s;
+    }
+
+    .btn-primary:hover {
+        background-color: #ff1493;
+    }
+
+    .no-pets {
+        font-size: 20px;
+        text-align: center;
+        color: #ff1493;
+        margin-top: 50px;
+    }
+
+    .pet-icon {
+        width: 32px;
+        margin-right: 8px;
+        vertical-align: middle;
+    }
+</style>
+{% endblock %}
+
+{% block main_block %}
+<h2><img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" class="pet-icon"> Registered Pets</h2>
+
+<div class="container">
+    <div class="row">
+        {% for pet in pets %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow">
+                <img src="{{ pet.image or 'https://via.placeholder.com/250' }}" class="card-img-top"
+                     alt="{{ pet.name }}"
+                     onerror="this.onerror=null;this.src='https://via.placeholder.com/250';"
+                     style="height: 250px; object-fit: cover;">
+
+                <div class="card-body">
+                    <h5 class="card-title">🐾 {{ pet.name }}</h5>
+                    <p class="card-text">
+                        <strong>Gender:</strong> {{ pet.gender }}<br>
+                        <strong>Age:</strong> {{ pet.age }} year{{ 's' if pet.age != 1 else '' }}
+                        <strong>Breeds:</strong>
+                        {% for breed in pet.breeds %}
+                            {{ breed.name }}{% if not loop.last %}, {% endif %}
+                        {% else %}
+                            No breed info
+                        {% endfor %}
+                    </p>
+
+                    {% if current_user.is_authenticated and not current_user.is_admin %}
+                    <form action="{{ url_for('add_to_cart', pet_id=pet.pet_id) }}" method="POST">
+                        <button type="submit" class="btn btn-primary w-100 mt-2">Add to Cart 🛒</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12 text-center">
+            <p class="no-pets" style="color: #ff6f91; font-weight: bold; font-size: larger;">No pets registered yet. Check back soon! 🐶🐱</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

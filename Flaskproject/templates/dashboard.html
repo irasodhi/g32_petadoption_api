@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title_block %} Login Page {% endblock %}
+{% block main_block %}
+<h1 class="text-center">Welcome to Dashboard</h1>
+<h2>Welcome, {{ current_user.username }}</h2>
+
+{% if current_user.is_admin %}
+<a href="{{ url_for('view_profile') }}" class="btn btn-info">View Profile</a>
+{% endif %}
+
+{% if current_user.is_authenticated %}
+<a href="{{ url_for('profile') }}">My Profile</a>
+{% endif %}
+{% endblock %}
