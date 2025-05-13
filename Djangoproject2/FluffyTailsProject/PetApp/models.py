@@ -1,12 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 
 class Species(models.Model):
     name = models.CharField(max_length=100)
 
-    def _str_(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -17,7 +18,7 @@ class Breeds(models.Model):
     name = models.CharField(max_length=100)
     species = models.ForeignKey(Species, on_delete=models.CASCADE) 
 
-    def _str_(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -40,7 +41,7 @@ class Pet(models.Model):
     adopted_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
 
 
-    def _str_(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -57,7 +58,7 @@ class Order(models.Model):
         ('Rejected', 'Rejected')
     ], default='Pending')
 
-    def _str_(self):
+    def __str__(self):
         return f"Order {self.id} - {self.user.username} - {self.status}"
 
 
@@ -69,17 +70,16 @@ class ContactMessage(models.Model):
     message = models.TextField()
     sent_at = models.DateTimeField(auto_now_add=True)
 
-    def _str_(self):
+    def __str__(self):
         return f"Message from {self.name} - {self.email}"
     
 
 
-from django.db import models
-from django.contrib.auth.models import User
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='profile_pics/', default='default.jpg')
 
-    def _str_(self):
+    def __str__(self):
         return f"{self.user.username} Profile"

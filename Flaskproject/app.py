@@ -672,30 +672,26 @@ def reject_order(order_id):
     flash(f"Order #{order.id} has been rejected.", "warning")
     return redirect(url_for('orders'))
 
+API_TOKEN = 'your_secret_token'
 
 @app.route('/api/orders', methods=['GET'])
-@login_required
 def api_get_orders():
-    try:
-        print(f"Current User: {current_user}")  
-        if current_user.is_admin:
-            orders = Order.query.order_by(Order.order_date.desc()).all()
-        else:
-            orders = Order.query.filter_by(user_id=current_user.id).order_by(Order.order_date.desc()).all()
+    auth_header = request.headers.get('Authorization')
+    if auth_header != f"Bearer {API_TOKEN}":
+        return jsonify({'error': 'Unauthorized'}), 401
 
-        print(f"Fetched Orders: {orders}")  
-        return jsonify([
-            {
-                "id": order.id,
-                "user": order.user.name,
-                "status": order.status,
-                "date": order.order_date.strftime('%Y-%m-%d %H:%M'),
-                "pets": [pet.name for pet in order.pets]
-            } for order in orders
-        ])
-    except Exception as e:
-        print(f"Error in /api/orders: {e}")
-        return jsonify({"error": "Internal Server Error"}), 500
+    # Simulate admin access for this trusted token:
+    orders = Order.query.order_by(Order.order_date.desc()).all()
+
+    return jsonify([
+        {
+            "id": order.id,
+            "user": order.user.name,
+            "status": order.status,
+            "date": order.order_date.strftime('%Y-%m-%d %H:%M'),
+            "pets": [pet.name for pet in order.pets]
+        } for order in orders
+    ])
 
 @app.route('/api/orders/<int:order_id>/status', methods=['POST'])
 @login_required

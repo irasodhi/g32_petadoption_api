@@ -275,12 +275,12 @@ def update_breed_view(request, breed_id):
 
 @login_required
 def dogs_view(request):
-    dogs = Pet.objects.filter(breeds_speciesname_iexact="Dog",is_available=True).distinct()
+    dogs = Pet.objects.filter(breeds__species__name__iexact="Dog",is_available=True).distinct()
     return render(request, 'dog.html', {'pets': dogs})
 
 @login_required
 def cats_view(request):
-    cats = Pet.objects.filter(breeds_speciesname_iexact="Cat",is_available=True).distinct()
+    cats = Pet.objects.filter(breeds__species__name__iexact="Cat",is_available=True).distinct()
     return render(request, 'cat.html', {'pets': cats})
 
 @login_required
@@ -353,20 +353,23 @@ def adopt_pets(request):
 
     return redirect('orders')
 
-@login_required
 def orders_view(request):
     try:
-        response = requests.get('http://127.0.0.1:5000/api/orders', cookies=request.COOKIES)
+        headers = {
+            'Authorization': 'Bearer your_secret_token'
+        }
+        response = requests.get('http://127.0.0.1:5000/api/orders', headers=headers)
+        print("Response Code:", response.status_code)
+        print("Response Content:", response.text)
+
         if response.status_code == 200:
             orders = response.json()
             return render(request, 'orders.html', {'orders': orders})
         else:
-            messages.error(request, "Failed to fetch orders.")
-    except:
-        messages.error(request, "API connection failed.")
+            messages.error(request, f"Failed to fetch orders. Status: {response.status_code}")
+    except Exception as e:
+        messages.error(request, f"API connection failed: {e}")
     return render(request, 'orders.html', {'orders': []})
-
-
 
 def is_admin(user):
     return user.is_superuser
@@ -385,7 +388,6 @@ def update_order_status(request, order_id, status):
         except:
             messages.error(request, "Connection to Flask API failed.")
     return redirect('orders')
-
 
 @login_required
 def view_messages(request):
